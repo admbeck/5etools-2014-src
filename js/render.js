@@ -4433,7 +4433,7 @@ Renderer.utils = class {
 			return isListMode ? "Special" : v;
 		}
 
-		static _getHtml_race ({v, isListMode, keyOptions}) {
+		static _getEntry_race ({v, isListMode, keyOptions}) {
 			const parts = v.map((it, i) => {
 				if (isListMode) {
 					return `${it.name.toTitleCase()}${it.subrace != null ? ` (${it.subrace})` : ""}`;
@@ -15629,9 +15629,14 @@ Renderer.hover = class {
 	// (Baked into render strings)
 	static handleLinkMouseLeave (evt, ele) {
 		const meta = Renderer.hover._eleCache.get(ele);
+
+		// Early-exit -- Plutonium binds this as a global `mouseout`, so avoid
+		//   handling any element which we are not explicitly tracking.
+		if (!meta) return;
+
 		ele.style.cursor = "";
 
-		if (!meta || meta.isPermanent) return;
+		if (meta.isPermanent) return;
 
 		if (evt.shiftKey) {
 			meta.isPermanent = true;
